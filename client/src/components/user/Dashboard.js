@@ -8,6 +8,7 @@ import MyButton from '../../utils/Button';
 const Dashboard = ({ loadUser, user: { loading, isAuthenticated } }) => {
   useEffect(() => {
     loadUser();
+    // eslint-disable-next-line
   }, [loadUser]);
 
   return loading && isAuthenticated === null ? (

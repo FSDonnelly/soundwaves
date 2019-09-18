@@ -37,11 +37,9 @@ img {
 /* Utilities */
 .container {
   max-width: 1100px;
-  margin: auto;
+  margin: 1rem auto;
   overflow: hidden;
   padding: 1rem;
-  margin-top: 2rem;
-  margin-bottom: 6rem;
   height: 100%;
 }
 
@@ -354,6 +352,8 @@ button {
 /*Footer*/
 footer {
   height: 100%;
+  padding-bottom: 12rem;
+  margin-top: 10rem;
 }
 
 footer h2 {
