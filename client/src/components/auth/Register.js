@@ -3,32 +3,122 @@ import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { setAlert } from '../../actions/alert';
+import FormField from '../../utils/FormField';
+import { generateData, isFormValid, update } from '../../utils/formActions';
+
+// import { setAlert } from '../../actions/alert';
 import { register } from '../../actions/user';
 
-const Register = ({ setAlert, register, isAuthenticated }) => {
+const Register = ({ generateData, isFormValid, register, isAuthenticated }) => {
+  const [formError, setFormError] = useState(false);
+  const [formSuccess, setFormSuccess] = useState(false);
+
   const [formData, setFormData] = useState({
-    name: '',
-    lastname: '',
-    email: '',
-    password: '',
-    password2: ''
+    name: {
+      element: 'input',
+      value: '',
+      config: {
+        name: 'name_input',
+        type: 'text',
+        placeholder: 'Enter your name'
+      },
+      validation: {
+        required: true
+      },
+      valid: false,
+      touched: false,
+      validationMessage: ''
+    },
+    lastname: {
+      element: 'input',
+      value: '',
+      config: {
+        name: 'lastname_input',
+        type: 'text',
+        placeholder: 'Enter your Lastname'
+      },
+      validation: {
+        required: true
+      },
+      valid: false,
+      touched: false,
+      validationMessage: ''
+    },
+    email: {
+      element: 'input',
+      value: '',
+      config: {
+        name: 'email_input',
+        type: 'email',
+        placeholder: 'Enter your email'
+      },
+      validation: {
+        required: true,
+        email: true
+      },
+      valid: false,
+      touched: false,
+      validationMessage: ''
+    },
+    password: {
+      element: 'input',
+      value: '',
+      config: {
+        name: 'password_input',
+        type: 'password',
+        placeholder: 'Enter your password'
+      },
+      validation: {
+        required: true,
+        password: true
+      },
+      valid: false,
+      touched: false,
+      validationMessage: ''
+    },
+    confirmPassword: {
+      element: 'input',
+      value: '',
+      config: {
+        name: 'confirm_password_input',
+        type: 'password',
+        placeholder: 'Confirm your password'
+      },
+      validation: {
+        required: true,
+        password: true,
+        confirm: 'password'
+      },
+      valid: false,
+      touched: false,
+      validationMessage: ''
+    }
   });
 
-  const { name, lastname, email, password, password2 } = formData;
+  const { name, lastname, email, password, confirmPassword } = formData;
 
-  const onChange = e =>
+  const onChange = element => {
+    const newFormData = update(element, formData, 'register');
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      formData: newFormData
     });
+    setFormError(false);
+  };
 
   const onSubmit = async e => {
     e.preventDefault();
-    if (password !== password2) {
-      setAlert('Passwords do not match', 'danger');
+
+    let dataToSubmit = generateData(formData, 'register');
+    let formIsValid = isFormValid(formData, 'register');
+
+    if (formIsValid) {
+      register(dataToSubmit);
+      setFormError(false);
+      setFormSuccess(true);
     } else {
-      register({ name, lastname, email, password });
+      setFormError(true);
     }
   };
 
@@ -46,54 +136,48 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
         </p>
         <form className='form' onSubmit={e => onSubmit(e)}>
           <div className='form-group'>
-            <input
-              type='text'
-              placeholder='Firstname'
+            <FormField
+              id={'name'}
+              formData={name}
+              change={element => onChange(element)}
               name='name'
-              onChange={e => onChange(e)}
               value={name}
-              // required
             />
           </div>
           <div className='form-group'>
-            <input
-              type='text'
-              placeholder='Lastname'
+            <FormField
+              id={'lastname'}
+              formData={lastname}
+              change={element => onChange(element)}
               name='lastname'
-              onChange={e => onChange(e)}
               value={lastname}
-              // required
             />
           </div>
           <div className='form-group'>
-            <input
-              type='email'
-              placeholder='Email Address'
+            <FormField
+              id={'email'}
+              formData={email}
+              change={element => onChange(element)}
               name='email'
-              onChange={e => onChange(e)}
               value={email}
-              // required
             />
           </div>
           <div className='form-group'>
-            <input
-              type='password'
-              placeholder='Password'
+            <FormField
+              id={'password'}
+              formData={password}
               name='password'
-              onChange={e => onChange(e)}
-              minLength='8'
+              change={element => onChange(element)}
               value={password}
-              // required
             />
           </div>
           <div className='form-group'>
-            <input
-              type='password'
-              placeholder='Confirm Password'
-              name='password2'
-              onChange={e => onChange(e)}
-              minLength='8'
-              value={password2}
+            <FormField
+              id={'confirmPassword'}
+              value={confirmPassword}
+              name='confirmPassword'
+              formData={confirmPassword}
+              change={element => onChange(element)}
             />
           </div>
           <input
@@ -111,16 +195,22 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
 };
 
 Register.propTypes = {
-  setAlert: PropTypes.func.isRequired,
+  update: PropTypes.func.isRequired,
+  isFormValid: PropTypes.func.isRequired,
+  generateData: PropTypes.func.isRequired,
   register: PropTypes.func.isRequired,
-  isAuthenticated: PropTypes.bool
+  isAuthenticated: PropTypes.bool,
+  formData: PropTypes.object.isRequired,
+  formError: PropTypes.bool,
+  formSuccess: PropTypes.bool
 };
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.user.isAuthenticated
+  isAuthenticated: state.user.isAuthenticated,
+  formData: state.user.formData
 });
 
 export default connect(
   mapStateToProps,
-  { setAlert, register }
+  { isFormValid, generateData, register, update }
 )(Register);
