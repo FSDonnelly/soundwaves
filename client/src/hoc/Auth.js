@@ -39,8 +39,11 @@ export default function(ComposedClass, reload, adminRoute = null) {
     user: state.user
   });
 
-  return connect(
-    mapStateToProps,
-    null
-  )(AuthCheck);
+  return (
+    connect(),
+    connect(
+      mapStateToProps,
+      null
+    )(AuthCheck)
+  );
 }

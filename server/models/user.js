@@ -43,54 +43,48 @@ const userSchema = mongoose.Schema({
   }
 });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', function(next) {
   let user = this;
 
   if (user.isModified('password')) {
-    bcrypt.genSalt(SALT_I, async function(err, salt) {
-      if (err) return await next(err);
-      bcrypt.hash(user.password, salt, async function(err, hash) {
-        if (err) return await next(err);
+    bcrypt.genSalt(SALT_I, function(err, salt) {
+      if (err) return next(err);
+      bcrypt.hash(user.password, salt, function(err, hash) {
+        if (err) return next(err);
         user.password = hash;
-        await next();
+        next();
       });
     });
   } else {
-    await next();
+    next();
   }
 });
 
-userSchema.methods.comparePassword = async function(candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, async function(
-    err,
-    isMatch
-  ) {
-    if (err) return await cb(err);
-    await cb(null, isMatch);
+userSchema.methods.comparePassword = function(candidatePassword, cb) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    if (err) return cb(err);
+    cb(null, isMatch);
   });
 };
 
-userSchema.methods.generateToken = async function(cb) {
+userSchema.methods.generateToken = function(cb) {
   let user = this;
   let token = jwt.sign(user._id.toHexString(), process.env.SECRET);
 
   user.token = token;
-  await user.save(async function(err, user) {
-    if (err) return await cb(err);
-    await cb(null, user);
+  user.save(function(err, user) {
+    if (err) return cb(err);
+    cb(null, user);
   });
 };
 
-userSchema.statics.findByToken = async function(token, cb) {
+userSchema.statics.findByToken = function(token, cb) {
   let user = this;
 
-  jwt.verify(token, process.env.SECRET, async function(err, decode) {
-    await user.findOne({ _id: decode, token: token }, async function(
-      err,
-      user
-    ) {
-      if (err) return await cb(err);
-      await cb(null, user);
+  jwt.verify(token, process.env.SECRET, function(err, decode) {
+    user.findOne({ _id: decode, token: token }, function(err, user) {
+      if (err) return cb(err);
+      cb(null, user);
     });
   });
 };
