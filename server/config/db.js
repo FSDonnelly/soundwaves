@@ -18,5 +18,3 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
-// Setup connection to DB
-// mongoose.Promise = global.Promise;

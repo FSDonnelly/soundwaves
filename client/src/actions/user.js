@@ -21,5 +21,5 @@ export const registerUser = dataToSubmit => async dispatch => {
 export const auth = () => async dispatch => {
   const res = await axios.get('api/users/auth').then(res => res.data);
 
-  dispatch({ type: AUTH_USER, payload: res });
+  await dispatch({ type: AUTH_USER, payload: res });
 };
