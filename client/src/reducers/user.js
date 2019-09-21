@@ -4,6 +4,11 @@ const initialState = {};
 
 export default function(state = initialState, { payload, type }) {
   switch (type) {
+    case AUTH_USER:
+      return {
+        ...state,
+        userData: payload
+      };
     case LOGIN_USER:
       return {
         ...state,
@@ -14,11 +19,7 @@ export default function(state = initialState, { payload, type }) {
         ...state,
         register: payload
       };
-    case AUTH_USER:
-      return {
-        ...state,
-        userData: payload
-      };
+
     default:
       return state;
   }

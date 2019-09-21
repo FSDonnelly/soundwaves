@@ -14,7 +14,7 @@ export default function(ComposedClass, reload, adminRoute = null) {
       try {
         this.props.dispatch(auth());
         let user = this.props.user.userData;
-        console.log(user);
+        console.log(this.props.user);
       } catch (err) {
         console.error(err);
       }
@@ -22,6 +22,7 @@ export default function(ComposedClass, reload, adminRoute = null) {
 
     render() {
       const { loading } = this.state;
+      console.log(this.props);
       if (loading) {
         return (
           <div className='main_loader'>
@@ -35,6 +36,7 @@ export default function(ComposedClass, reload, adminRoute = null) {
       return <ComposedClass {...this.props} user={this.props.user} />;
     }
   }
+
   const mapStateToProps = state => ({
     user: state.user
   });
