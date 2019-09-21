@@ -10,15 +10,15 @@ export default function(ComposedClass, reload, adminRoute = null) {
       loading: false
     };
 
-    async componentDidMount() {
+    componentDidMount = () => {
       try {
-        let response = await this.props.dispatch(auth());
-        let user = await this.props.user.userData;
+        this.props.dispatch(auth());
+        let user = this.props.user.userData;
         console.log(user);
       } catch (err) {
         console.error(err);
       }
-    }
+    };
 
     render() {
       const { loading } = this.state;

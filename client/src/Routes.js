@@ -22,7 +22,7 @@ const Routes = () => {
         <Route
           path='/user/dashboard'
           exact
-          component={Auth(UserDashboard, true)}
+          component={Auth(UserDashboard, false)}
         />
       </Switch>
     </Layout>
